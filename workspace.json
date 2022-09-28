@@ -4,6 +4,7 @@
   "projects": {
     "api": "apps/api",
     "auth-project": "apps/auth-project",
-    "auth-project-e2e": "apps/auth-project-e2e"
+    "auth-project-e2e": "apps/auth-project-e2e",
+    "core": "libs/core"
   }
 }

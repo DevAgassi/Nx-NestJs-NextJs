@@ -2,11 +2,13 @@ import { AppProps } from 'next/app';
 import Head from 'next/head';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { FC } from 'react';
 
-import './styles.css';
+import '../styles/global.css';
+
 const queryClient = new QueryClient();
 
-function CustomApp({ Component, pageProps }: AppProps) {
+const App: FC<AppProps> = ({ Component, pageProps }: AppProps) => {
   return (
     <>
       <QueryClientProvider client={queryClient}>
@@ -22,4 +24,4 @@ function CustomApp({ Component, pageProps }: AppProps) {
   );
 }
 
-export default CustomApp;
+export default App;
