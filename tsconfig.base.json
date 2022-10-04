@@ -15,7 +15,12 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@pet-project/core": ["libs/core/src/index.ts"]
+      "@pet-project/auth": ["libs/auth/src/index.ts"],
+      "@pet-project/core": ["libs/core/src/index.ts"],
+      "@pet-project/course": ["libs/course/src/index.ts"],
+      "@pet-project/prisma": ["libs/prisma/src/index.ts"],
+      "@pet-project/recipes": ["libs/recipes/src/index.ts"],
+      "@pet-project/user": ["libs/user/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

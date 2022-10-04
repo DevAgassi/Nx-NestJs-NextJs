@@ -43,3 +43,6 @@ Thumbs.db
 
 #ENV
 .env
+
+#tmp
+tmp/*

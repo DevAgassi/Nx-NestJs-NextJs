@@ -3,8 +3,13 @@
   "version": 2,
   "projects": {
     "api": "apps/api",
+    "auth": "libs/auth",
     "auth-project": "apps/auth-project",
     "auth-project-e2e": "apps/auth-project-e2e",
-    "core": "libs/core"
+    "core": "libs/core",
+    "course": "libs/course",
+    "prisma": "libs/prisma",
+    "recipes": "libs/recipes",
+    "user": "libs/user"
   }
 }

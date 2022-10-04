@@ -14,10 +14,11 @@ import { CoreResolver } from "./core.resolver";
       validationSchema,
     }),
     // The ConfigModule lives here
-    GraphQLModule.forRoot<ApolloDriverConfig>({
+   GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
-      autoSchemaFile: true,
+      autoSchemaFile: true,//autoSchemaFile: 'schema.gql',
       playground: true,
+      debug: true,
     }),
   ],
   controllers: [],
@@ -25,3 +26,4 @@ import { CoreResolver } from "./core.resolver";
   exports: [],
 })
 export class CoreModule {}
+

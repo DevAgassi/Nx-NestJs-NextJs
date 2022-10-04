@@ -1,0 +1,81 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type User {
+  id: Float
+  email: String
+  firstName: String
+  lastName: String
+}
+
+type UserToken {
+  token: String!
+  user: User!
+}
+
+type Lesson {
+  id: String
+  title: String
+  description: String
+  imageUrl: String
+  content: String
+}
+
+type Course {
+  id: String
+  title: String
+  description: String
+  lessons: [Lesson!]
+}
+
+type Query {
+  uptime: Float!
+  courses: [Course!]
+  course(id: Float!): Course
+}
+
+type Mutation {
+  login(input: AuthLoginInput!): UserToken!
+  register(input: AuthRegisterInput!): UserToken!
+  createCourse(input: CreateCourseInput!): Course
+  updateCourse(id: Float!, input: UpdateCourseInput!): Course
+  deleteCourse(id: Float!): Boolean
+  createLesson(courseId: Float!, input: CreateLessonInput!): Lesson
+  updateLesson(lessonId: Float!, input: UpdateLessonInput!): Lesson
+  deleteLesson(lessonId: Float!): Boolean
+}
+
+input AuthLoginInput {
+  email: String!
+  password: String!
+}
+
+input AuthRegisterInput {
+  email: String!
+  password: String!
+}
+
+input CreateCourseInput {
+  title: String!
+  description: String
+  imageUrl: String
+}
+
+input UpdateCourseInput {
+  title: String
+  description: String
+  imageUrl: String
+}
+
+input CreateLessonInput {
+  title: String!
+  description: String
+  content: String
+}
+
+input UpdateLessonInput {
+  title: String
+  description: String
+  content: String
+}
