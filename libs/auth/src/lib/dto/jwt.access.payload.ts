@@ -1,3 +1,4 @@
 export class JwtAccessPayload {
-  uuid: string;
+  sub: string;
+  email: string;
 }

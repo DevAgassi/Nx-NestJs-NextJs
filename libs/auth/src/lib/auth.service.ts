@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  HttpException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -29,17 +30,7 @@ export class AuthService {
 
   public async login(input: AuthLoginInput): Promise<UserToken> {
     const { email, password } = input;
-    const user = await this.userService.findByEmail(email);
-
-    if (!user) {
-      throw new NotFoundException(`User with email ${email} does not exist`);
-    }
-
-    const passwordValid = await Helper.validate(password, user.password);
-
-    if (!passwordValid) {
-      throw new Error(`Invalid password`);
-    }
+    const user = await this.validate(email, password);
 
     const [token, refreshToken] = await this.generateTokens(user);
 
@@ -61,6 +52,7 @@ export class AuthService {
     }
 
     const password = await Helper.hash(input.password);
+
     const user = await this.userService.create({
       ...input,
       password,
@@ -76,33 +68,58 @@ export class AuthService {
     };
   }
 
-  async generateTokens(user: PublicUser) {
+  private async validate(email: string, password: string): Promise<User> {
+    const user = await this.userService.findByEmail(email);
+
+    if (!user) {
+      throw new NotFoundException(`User with email ${email} does not exist`);
+    }
+
+    const passwordValid = await Helper.validate(password, user.password);
+
+    if (!passwordValid) {
+      throw new NotFoundException(`Invalid password`);
+    }
+
+    return user;
+  }
+
+  private async generateTokens(user: PublicUser) {
     return Promise.all([
       this.createAccessToken(user),
       this.createRefreshToken(user),
     ]);
   }
 
-  async createAccessToken(user: PublicUser, ttl?: number) {
+  private async createAccessToken(user: PublicUser, ttl?: number) {
     const payload: JwtAccessPayload = {
-      uuid: user.uuid,
-      //email: user.email,
+      sub: user.uuid,
+      email: user.email,
       //roles: user.roles,
     };
 
     let expiresIn = ttl || this.configService.get<number>('expires_in');
-    
-    expiresIn =  (date => date.setSeconds(date.getSeconds() + expiresIn))(new Date());
 
-    return this.generateJwt(payload, { /*secret: this.configService.get('JWT_SECRET'),*/ expiresIn });
+    expiresIn = ((date) => date.setSeconds(date.getSeconds() + expiresIn))(
+      new Date()
+    );
+
+    return this.generateJwt(payload, {
+      /*secret: this.configService.get('JWT_SECRET'),*/ expiresIn,
+    });
   }
 
-  async createRefreshToken(user: PublicUser): Promise<UserAuthTokenRefresh> {
+  private async createRefreshToken(
+    user: PublicUser
+  ): Promise<UserAuthTokenRefresh> {
     return this.createUserRefreshToken(user.uuid);
   }
 
-  createUserRefreshToken(uuid: string): UserAuthTokenRefresh {
-    const refresh_expires_in =  (date => date.setSeconds(date.getSeconds() + this.configService.get('refresh_expires_in')))(new Date());
+  private createUserRefreshToken(uuid: string): UserAuthTokenRefresh {
+    const refresh_expires_in = ((date) =>
+      date.setSeconds(
+        date.getSeconds() + this.configService.get('refresh_expires_in')
+      ))(new Date());
     const token = this.jwtService.sign(
       { uuid },
       {
@@ -111,14 +128,28 @@ export class AuthService {
       }
     );
 
-    return {refresh_token: token, expiresIn: refresh_expires_in};
+    return { refresh_token: token, expiresIn: refresh_expires_in };
   }
 
-  generateJwt(payload: object, options?: JwtSignOptions): string {
+  private generateJwt(payload: object, options?: JwtSignOptions): string {
     return this.jwtService.sign(payload, options);
   }
 
-  async getUserFromJwtPayload(payload: JwtAccessPayload) {
-    return await this.userService.findByUUID(payload.uuid);
+  public async getUserFromJwtPayload(uuid: string) {
+    return await this.userService.findByUUID(uuid);
+  }
+
+  public async verifyToken(token: string): Promise<User> {
+    const decoded = await this.jwtService.verify(token, {
+      secret: this.configService.get('jwt_secret'),
+    });
+
+    const user = await this.userService.findByEmail(decoded.email);
+
+    if (!user) {
+      throw new Error('Unable to get the user from decoded token.');
+    }
+
+    return user;
   }
 }

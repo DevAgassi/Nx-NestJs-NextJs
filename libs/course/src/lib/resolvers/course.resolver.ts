@@ -23,6 +23,7 @@ export class CourseResolver {
   @UseGuards(GqlAuthGuard)
   @Mutation(() => Course)
   async createCourse(@CtxUser() user: User, @Args('newCourse') newCourse: CreateCourseInput) {
+    
     return this.service.createCourse(user.id, newCourse)
   }
 

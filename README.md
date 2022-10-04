@@ -9,7 +9,9 @@ https://blog.nrwl.io/nx-now-supports-next-js-84ae3d0b2aed
 
 ## Run Command
 nx serve api = run Api app
+
 nx serve auth-project = run AuthProject app
+
 nx dep-graph = show WorkSpace Graph
 
 nx affected:apps =  The affected:apps looks at what you have changed and uses the project graph to figure out which apps are affected by this change.
